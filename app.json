@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "EquiLib",
+    "slug": "equilib",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A1628"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.equilib.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "EquiLib utilise le microphone pour vous permettre de décrire vos préoccupations par la voix.",
+        "NSLocationWhenInUseUsageDescription": "EquiLib utilise votre localisation pour trouver des praticiens près de chez vous."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A1628"
+      },
+      "package": "com.equilib.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "EquiLib utilise le microphone pour vous permettre de décrire vos préoccupations par la voix."
+        }
+      ]
+    ]
+  }
+}
