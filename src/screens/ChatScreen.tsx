@@ -2,18 +2,16 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import { Colors, Typography, Spacing } from '../styles';
 import { MessageBubble } from '../components/MessageBubble';
+import { PractitionerSuggestion } from '../components/PractitionerSuggestion';
 import { Button } from '../components/Button';
 import { mockMessages, mockTriageResult } from '../data/mockData';
 import { Message } from '../types/models';
 import { useNavigation } from '@react-navigation/native';
 
 const mockResponses = [
-  'Je comprends ce que vous ressentez. C\'est tout à fait normal d\'éprouver cela. Pouvez-vous me dire depuis quand vous vivez cette situation ?',
-  'Merci de partager cela avec moi. Ces sentiments sont importants. Est-ce que cela affecte votre quotidien, par exemple votre sommeil ou votre appétit ?',
-  'Je vous entends. Avez-vous pu en parler avec quelqu\'un de votre entourage ?',
-  'C\'est courageux de votre part d\'en parler. Comment décririez-vous votre niveau de stress en ce moment, sur une échelle de 1 à 10 ?',
-  'Je comprends. Avez-vous déjà consulté un professionnel de santé mentale auparavant ?',
-  'Merci pour votre confiance. D\'après ce que vous me décrivez, je pense qu\'une orientation pourrait vous être utile. Souhaitez-vous que je génère une analyse ?',
+  "ouch, that's a lot to carry 😔 what's weighing on you the most right now — work or not being able to sleep?",
+  "yeah, ruminating at night is pretty classic when your brain just won't clock out from work... how long has this been going on roughly?",
+  "ok, I'm getting a clearer picture. what you're describing — ruminations, insomnia, burnout at work since a specific change — sounds like chronic stress and I'd really recommend getting some support. I found 3 people who could genuinely help with what you're going through.",
 ];
 
 export const ChatScreen: React.FC = () => {
@@ -40,19 +38,22 @@ export const ChatScreen: React.FC = () => {
     setInputText('');
 
     // Mock AI response
+    if (responseIndex >= mockResponses.length) return;
+
     setTimeout(() => {
+      const nextIndex = responseIndex;
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         conversationId: 'conv-1',
         role: 'assistant',
-        content: mockResponses[responseIndex % mockResponses.length],
+        content: mockResponses[nextIndex],
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, aiResponse]);
       setResponseIndex(prev => prev + 1);
 
-      // Show triage banner after a few exchanges
-      if (responseIndex >= 2) {
+      // Show triage banner after the 3rd AI response
+      if (nextIndex === 2) {
         setShowTriageBanner(true);
       }
     }, 1000);
@@ -70,7 +71,7 @@ export const ChatScreen: React.FC = () => {
           onPress={() => navigation.navigate('Triage' as never)}
         >
           <Text style={styles.triageBannerText}>
-            Orientation disponible — Voir votre analyse
+            Referral available — View your analysis
           </Text>
         </TouchableOpacity>
       )}
@@ -82,6 +83,7 @@ export const ChatScreen: React.FC = () => {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.messageList}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+        ListFooterComponent={responseIndex >= 3 ? <PractitionerSuggestion /> : null}
       />
 
       <View style={styles.inputContainer}>
@@ -89,14 +91,14 @@ export const ChatScreen: React.FC = () => {
           style={styles.input}
           value={inputText}
           onChangeText={setInputText}
-          placeholder="Écrivez votre message..."
+          placeholder="Type your message..."
           placeholderTextColor={Colors.gray700}
           multiline
           returnKeyType="send"
           onSubmitEditing={handleSend}
         />
         <Button
-          title="Envoyer"
+          title="Send"
           onPress={handleSend}
           variant="primary"
           disabled={!inputText.trim()}
